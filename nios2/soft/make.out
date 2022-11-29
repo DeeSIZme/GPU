@@ -1,0 +1,10 @@
+Starting Build
+lun. 14 nov. 2022 12:56:03 CET
+etas_smartest_info running cat command:mri.h
+
+etas_smartest_info running cat command:mri.c
+
+etas_smartest_info running cat command:master_release_info.c
+
+etas_smartest_info run nm on all object files
+

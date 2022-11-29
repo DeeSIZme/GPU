@@ -9,6 +9,8 @@
 *.sof
 *.sta.rpt
 *.summary
+*~
+*.bak
 c5_pin_model_dump.txt
 db/
 incremental_db/
