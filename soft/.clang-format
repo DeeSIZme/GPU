@@ -1,0 +1,7 @@
+BasedOnStyle: LLVM
+IndentWidth: 2
+DerivePointerAlignment: false
+PointerAlignment: Left
+ColumnLimit: 0
+AllowShortLoopsOnASingleLine: true
+AllowShortLambdasOnASingleLine: All

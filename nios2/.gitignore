@@ -1,0 +1,16 @@
+*.done
+*.jdi
+*.map.smsg
+*.pin
+*.qws
+*.rpt
+*.sld
+*.smsg
+*.sof
+*.sta.rpt
+*.summary
+c5_pin_model_dump.txt
+db/
+incremental_db/
+nios_sys
+.qsys_edit
