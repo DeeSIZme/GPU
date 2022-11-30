@@ -139,6 +139,14 @@
          type = "String";
       }
    }
+   element nios_sys
+   {
+      datum _originalDeviceFamily
+      {
+         value = "Cyclone V";
+         type = "String";
+      }
+   }
    element pixel_clock
    {
       datum _sortIndex
@@ -217,9 +225,9 @@
    name="OnChipMem"
    kind="altera_avalon_onchip_memory2"
    version="21.1"
-   enabled="1">
+   enabled="0">
   <parameter name="allowInSystemMemoryContentEditor" value="false" />
-  <parameter name="autoInitializationFileName">$${FILENAME}_OnChipMem</parameter>
+  <parameter name="autoInitializationFileName" value="nios_sys_OnChipMem" />
   <parameter name="blockType" value="AUTO" />
   <parameter name="copyInitFile" value="false" />
   <parameter name="dataWidth" value="32" />
@@ -255,7 +263,7 @@
    name="juart"
    kind="altera_avalon_jtag_uart"
    version="21.1"
-   enabled="1">
+   enabled="0">
   <parameter name="allowMultipleConnections" value="false" />
   <parameter name="avalonSpec" value="2.0" />
   <parameter name="clkFreq" value="100000000" />
@@ -270,9 +278,9 @@
   <parameter name="writeBufferDepth" value="64" />
   <parameter name="writeIRQThreshold" value="8" />
  </module>
- <module name="nios2_cpu" kind="altera_nios2_gen2" version="21.1" enabled="1">
-  <parameter name="AUTO_CLK_CLOCK_DOMAIN" value="2" />
-  <parameter name="AUTO_CLK_RESET_DOMAIN" value="2" />
+ <module name="nios2_cpu" kind="altera_nios2_gen2" version="21.1" enabled="0">
+  <parameter name="AUTO_CLK_CLOCK_DOMAIN" value="1" />
+  <parameter name="AUTO_CLK_RESET_DOMAIN" value="1" />
   <parameter name="AUTO_DEVICE" value="5CSEMA5F31C6" />
   <parameter name="AUTO_DEVICE_SPEEDGRADE" value="6" />
   <parameter name="bht_ramBlockType" value="Automatic" />
@@ -449,12 +457,12 @@
   <parameter name="userDefinedSettings" value="" />
  </module>
  <module name="pixel_clock" kind="clock_source" version="21.1" enabled="1">
-  <parameter name="clockFrequency" value="65000000" />
+  <parameter name="clockFrequency" value="40000000" />
   <parameter name="clockFrequencyKnown" value="true" />
   <parameter name="inputClockFrequency" value="0" />
   <parameter name="resetSynchronousEdges" value="NONE" />
  </module>
- <module name="timer" kind="altera_avalon_timer" version="21.1" enabled="1">
+ <module name="timer" kind="altera_avalon_timer" version="21.1" enabled="0">
   <parameter name="alwaysRun" value="false" />
   <parameter name="counterSize" value="32" />
   <parameter name="fixedPeriod" value="false" />
@@ -471,11 +479,11 @@
    kind="altera_up_avalon_video_vga_controller"
    version="21.1"
    enabled="1">
-  <parameter name="AUTO_CLK_CLOCK_RATE" value="65000000" />
+  <parameter name="AUTO_CLK_CLOCK_RATE" value="40000000" />
   <parameter name="AUTO_DEVICE_FAMILY" value="Cyclone V" />
   <parameter name="board" value="DE1-SoC" />
   <parameter name="device" value="VGA Connector" />
-  <parameter name="resolution" value="XGA 1024x768" />
+  <parameter name="resolution" value="SVGA 800x600" />
   <parameter name="underflow_flag" value="false" />
  </module>
  <connection
