@@ -7,18 +7,19 @@ module vertex_computation #(
   input reset_n,
   input start,
   input [COORD_WIDTH-1:0]vertexes[3][3],
-  output logic [COORD_WIDTH-1:0]bounds[3][3],
+  output logic [COORD_WIDTH-1:0]bound_coefs[3][2],
+  output logic [2*COORD_WIDTH-1:0]bound_const[3],
   output eoc
 );
 
-logic [COORD_WIDTH-1:0]next_bounds[3][2];
+logic [COORD_WIDTH-1:0]next_coefs[3][3];
 assign eoc = '1;
 
 always_comb begin
   for (int i=0; i<3; ++i) begin
         int j = (i+1)%3; // next vertex
-        next_bounds[i][0] = vertexes[i][1] - vertexes[j][1] ;
-        next_bounds[i][1] = vertexes[j][0] - vertexes[i][0] ;
+        next_coefs[i][0] = vertexes[i][1] - vertexes[j][1] ;
+        next_coefs[i][1] = vertexes[j][0] - vertexes[i][0] ;
   end
 end
 
@@ -27,9 +28,9 @@ always_ff @(posedge clk or negedge reset_n) begin
   end
   else begin
     for (int i=0; i<3; ++i) begin
-          bounds[i][0] <= next_bounds[i][0];
-          bounds[i][1] <= next_bounds[i][1];
-          bounds[i][2] <= -(next_bounds[i][0] * vertexes[i][0] + next_bounds[i][1] * vertexes[i][1]);
+          bound_coefs[i][0] <= next_coefs[i][0];
+          bound_coefs[i][1] <= next_coefs[i][1];
+          bound_const[i] <= -(next_coefs[i][0] * vertexes[i][0] + next_coefs[i][1] * vertexes[i][1]);
     end
   end
 end

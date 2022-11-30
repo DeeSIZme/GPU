@@ -87,7 +87,8 @@ data_fetch #(
 
 wire ver_start;
 wire [COORD_WIDTH-1:0]ver_vertexes[3][3];
-wire [COORD_WIDTH-1:0]ver_bounds[3][3];
+wire [COORD_WIDTH-1:0]ver_bound_coefs[3][2];
+wire [2*COORD_WIDTH-1:0]ver_bound_const[3];
 wire ver_eoc;
 
 vertex_computation #(
@@ -95,16 +96,18 @@ vertex_computation #(
     .SCREEN_X_SIZE (SCREEN_X_SIZE),
     .SCREEN_Y_SIZE (SCREEN_Y_SIZE)
   ) ver_inst (
-    .clk            (clk         ),
-    .reset_n        (reset_n     ),
-    .start          (ver_start   ),
-    .vertexes       (ver_vertexes),
-    .bounds         (pix_bounds  ),
-    .eoc            (ver_eoc     )
+    .clk            (clk            ),
+    .reset_n        (reset_n        ),
+    .start          (ver_start      ),
+    .vertexes       (ver_vertexes   ),
+    .bound_coefs    (pix_bound_coefs),
+    .bound_const    (pix_bound_const),
+    .eoc            (ver_eoc        )
   );
 
 wire pix_start;
-wire [COORD_WIDTH-1:0]pix_bounds[3][3];
+wire [COORD_WIDTH-1:0]pix_bound_coefs[3][2];
+wire [2*COORD_WIDTH-1:0]pix_bound_const[3];
 wire [COLOR_WIDTH-1:0]pix_color;
 wire pix_eoc;
 
@@ -118,7 +121,8 @@ pixel_computation #(
     .clk            (clk       ),
     .reset_n        (reset_n   ),
     .start          (pix_start ),
-    .bounds         (pix_bounds),
+    .bound_coefs    (pix_bound_coefs),
+    .bound_const    (pix_bound_const),
     .color          (pix_color ),
     .eoc            (pix_eoc   )
   );

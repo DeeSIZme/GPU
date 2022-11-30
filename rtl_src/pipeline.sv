@@ -22,11 +22,13 @@ module pipeline #(
   /// VERTEX COMPUTATION INTERFACE
   output                               ver_start,
   output logic    [COORD_WIDTH - 1: 0] ver_vertexes[3][3],
-  input           [COORD_WIDTH - 1: 0] ver_bounds[3][3],
+  input logic        [COORD_WIDTH-1:0] ver_bound_coefs[3][2],
+  input logic      [2*COORD_WIDTH-1:0] ver_bound_const[3],
   input                                ver_eoc,
   /// PIXEL COMPUTATION INTERFACE
   output                               pix_start,
-  output logic    [COORD_WIDTH - 1: 0] pix_bounds[3][3],
+  output logic       [COORD_WIDTH-1:0] pix_bound_coefs[3][2],
+  output logic     [2*COORD_WIDTH-1:0] pix_bound_const[3],
   output logic    [COLOR_WIDTH - 1: 0] pix_color,
   input                                pix_eoc
 );
@@ -87,9 +89,9 @@ always_ff @(posedge clk or negedge reset_n) begin: data_flow_proc
       ver_vertexes[i][0]        <= '0;
       ver_vertexes[i][1]        <= '0;
       ver_vertexes[i][2]        <= '0;
-      pix_bounds[i][0]   <= '0;
-      pix_bounds[i][1]   <= '0;
-      pix_bounds[i][2]   <= '0;
+      pix_bound_coefs[i][0]     <= '0;
+      pix_bound_coefs[i][1]     <= '0;
+      pix_bound_const           <= '0;
     end
     ver_color           <= '0;
     pix_color           <= '0;
@@ -98,7 +100,8 @@ always_ff @(posedge clk or negedge reset_n) begin: data_flow_proc
     if(next_triangle) begin
       curr_triangle       <= curr_triangle+1;
       ver_vertexes        <= fetch_vertexes;
-      pix_bounds          <= ver_bounds;
+      pix_bound_coefs     <= ver_bound_coefs;
+      pix_bound_const     <= ver_bound_const;
       ver_color           <= fetch_color;
       pix_color           <= ver_color;
     end
