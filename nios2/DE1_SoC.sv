@@ -145,25 +145,26 @@ module DE1_SoC(
 
 assign    ledr        =    '0;
 
+wire vga_sync;
+wire vga_blank;
+
+assign vga_sync_n = !vga_sync;
+assign vga_blank_n = !vga_blank;
 
 nios_sys soc (
   .clk_0_clk       ( clock_50 ) ,
   .clk_0_1_clk     ( clock_50 ) ,
   .reset_reset_n   ( key[0]   ) ,
   .reset_1_reset_n ( key[0]   ) ,
-
-  
-	assign vga_blank_n = !vga_blank;
-	assign vga_sync_n = !vga_sync;
 	
-	.video_vga_controller_0_external_interface_CLK   (vga_clk),     
-	.video_vga_controller_0_external_interface_HS    (vga_hs),      
-	.video_vga_controller_0_external_interface_VS    (vga_vs),      
-	.video_vga_controller_0_external_interface_BLANK (vga_blank),
-	.video_vga_controller_0_external_interface_SYNC  (vga_sync), 
-	.video_vga_controller_0_external_interface_R     (vga_r),       
-	.video_vga_controller_0_external_interface_G     (vga_g),       
-	.video_vga_controller_0_external_interface_B     (vga_b)      
+  .video_vga_controller_0_external_interface_CLK   (vga_clk),
+  .video_vga_controller_0_external_interface_HS    (vga_hs),
+  .video_vga_controller_0_external_interface_VS    (vga_vs),
+  .video_vga_controller_0_external_interface_BLANK (vga_blank),
+  .video_vga_controller_0_external_interface_SYNC  (vga_sync),
+  .video_vga_controller_0_external_interface_R     (vga_r),
+  .video_vga_controller_0_external_interface_G     (vga_g),
+  .video_vga_controller_0_external_interface_B     (vga_b)
 );
 
 

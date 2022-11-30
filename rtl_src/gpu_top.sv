@@ -64,8 +64,6 @@ wire [ADDR_WIDTH-1:0]base_addr_color;
 
 //TODO AXI target
 
-//TODO VGA controller
-
 wire fetch_start;
 wire [ADDR_WIDTH-1:0]curr_addr_vertex;
 wire [ADDR_WIDTH-1:0]curr_addr_color;
@@ -128,6 +126,17 @@ pixel_computation #(
     .color(pix_color),
     .eoc(pix_eoc)
   );
+
+vga_master vga_master_i (
+    .clk            (pixel_clock    ),
+    .resetn         (pixel_resetn   ),
+    .m_data         (m_data         ),
+    .m_startofpacket(m_startofpacket),
+    .m_endofpacket  (m_endofpacket  ),
+    .m_empty        (m_empty        ),
+    .m_valid        (m_valid        ),
+    .m_ready        (m_ready        )
+);
 
 pipeline #(
   .ADDR_WIDTH(ADDR_WIDTH),
