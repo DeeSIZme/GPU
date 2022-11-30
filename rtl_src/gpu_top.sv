@@ -1,11 +1,11 @@
 module gpu_top #(
-  parameter ADDR_WIDTH = 32,
-  parameter COORD_WIDTH = 16,
-  parameter COLOR_WIDTH = 16,
-  parameter VERTEX_SIZE = 6, // in byte
+  parameter ADDR_WIDTH    = 32,
+  parameter COORD_WIDTH   = 16,
+  parameter COLOR_WIDTH   = 16,
+  parameter VERTEX_SIZE   = 6, // in byte
   parameter SCREEN_X_SIZE = 800,
   parameter SCREEN_Y_SIZE = 600,
-  parameter CORES_COUNT = 10
+  parameter CORES_COUNT   = 10
 ) (
   input clk,
   input reset_n,
@@ -72,17 +72,17 @@ wire [COORD_WIDTH-1:0]fetch_vertexes[3][3];
 wire fetch_eoc;
 
 data_fetch #(
-    .ADDR_WIDTH(ADDR_WIDTH),
-    .COORD_WIDTH(COORD_WIDTH)
+    .ADDR_WIDTH  (ADDR_WIDTH ),
+    .COORD_WIDTH (COORD_WIDTH)
   ) fetch_inst (
-    .clk(clk),
-    .rst(reset_n),
-    .start(fetch_start),
-    .addr_vertex(curr_addr_vertex),
-    .addr_colors(curr_addr_color),
-    .colors(fetch_color),
-    .vertexes(fetch_vertexes),
-    .eoc(fetch_eoc)
+    .clk         (clk             ),
+    .rst         (reset_n         ),
+    .start       (fetch_start     ),
+    .addr_vertex (curr_addr_vertex),
+    .addr_colors (curr_addr_color ),
+    .colors      (fetch_color     ),
+    .vertexes    (fetch_vertexes  ),
+    .eoc         (fetch_eoc       )
   );
 
 wire ver_start;
@@ -92,17 +92,17 @@ wire [COORD_WIDTH-1:0]ver_normal_vectors[3][2];
 wire ver_eoc;
 
 vertex_computation #(
-    .COORD_WIDTH(COORD_WIDTH),
-    .SCREEN_X_SIZE(SCREEN_X_SIZE),
-    .SCREEN_Y_SIZE(SCREEN_Y_SIZE)
+    .COORD_WIDTH   (COORD_WIDTH  ),
+    .SCREEN_X_SIZE (SCREEN_X_SIZE),
+    .SCREEN_Y_SIZE (SCREEN_Y_SIZE)
   ) ver_inst (
-    .clk(clk),
-    .rst(reset_n),
-    .start(ver_start),
-    .vertexes(ver_vertexes),
-    .vertexes_proj(ver_vertexes_proj),
-    .normal_vectors(ver_normal_vectors),
-    .eoc(ver_eoc)
+    .clk            (clk               ),
+    .rst            (reset_n           ),
+    .start          (ver_start         ),
+    .vertexes       (ver_vertexes      ),
+    .vertexes_proj  (ver_vertexes_proj ),
+    .normal_vectors (ver_normal_vectors),
+    .eoc            (ver_eoc           )
   );
 
 wire pix_start;
@@ -112,37 +112,37 @@ wire [COLOR_WIDTH-1:0]pix_color;
 wire pix_eoc;
 
 pixel_computation #(
-    .COORD_WIDTH(COORD_WIDTH),
-    .COLOR_WIDTH(COLOR_WIDTH),
-    .SCREEN_X_SIZE(SCREEN_X_SIZE),
-    .SCREEN_Y_SIZE(SCREEN_Y_SIZE),
-    .CORES_COUNT(CORES_COUNT)
+    .COORD_WIDTH   (COORD_WIDTH  ),
+    .COLOR_WIDTH   (COLOR_WIDTH  ),
+    .SCREEN_X_SIZE (SCREEN_X_SIZE),
+    .SCREEN_Y_SIZE (SCREEN_Y_SIZE),
+    .CORES_COUNT   (CORES_COUNT  )
   ) pix_inst (
-    .clk(clk),
-    .rst(reset_n),
-    .start(pix_start),
-    .vertexes_proj(pix_vertexes_proj),
-    .normal_vectors(pix_normal_vectors),
-    .color(pix_color),
-    .eoc(pix_eoc)
+    .clk            (clk               ),
+    .rst            (reset_n           ),
+    .start          (pix_start         ),
+    .vertexes_proj  (pix_vertexes_proj ),
+    .normal_vectors (pix_normal_vectors),
+    .color          (pix_color         ),
+    .eoc            (pix_eoc           )
   );
 
 vga_master vga_master_i (
-    .clk            (pixel_clock    ),
-    .resetn         (pixel_resetn   ),
-    .m_data         (m_data         ),
-    .m_startofpacket(m_startofpacket),
-    .m_endofpacket  (m_endofpacket  ),
-    .m_empty        (m_empty        ),
-    .m_valid        (m_valid        ),
-    .m_ready        (m_ready        )
+  .clk             (pixel_clock    ),
+  .resetn          (pixel_resetn   ),
+  .m_data          (m_data         ),
+  .m_startofpacket (m_startofpacket),
+  .m_endofpacket   (m_endofpacket  ),
+  .m_empty         (m_empty        ),
+  .m_valid         (m_valid        ),
+  .m_ready         (m_ready        )
 );
 
 pipeline #(
-  .ADDR_WIDTH(ADDR_WIDTH),
-  .COORD_WIDTH(COORD_WIDTH),
-  .COLOR_WIDTH(COLOR_WIDTH),
-  .VERTEX_SIZE(VERTEX_SIZE)
+  .ADDR_WIDTH  (ADDR_WIDTH ),
+  .COORD_WIDTH (COORD_WIDTH),
+  .COLOR_WIDTH (COLOR_WIDTH),
+  .VERTEX_SIZE (VERTEX_SIZE)
   ) pipeline_inst (.*);
 
 endmodule

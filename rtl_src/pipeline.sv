@@ -4,33 +4,33 @@ module pipeline #(
   parameter COLOR_WIDTH = 16,
   parameter VERTEX_SIZE = 6 // in byte
 ) (
-  input clk,
-  input reset_n,
+  input                                clk,
+  input                                reset_n,
   /// CONTROLLER INTERFACE
-  input [ADDR_WIDTH-1:0]base_addr_vertex,
-  input [ADDR_WIDTH-1:0]base_addr_color,
-  input [31:0]triangles_count,
-  input frame_start,
-  output logic frame_end,
+  input            [ADDR_WIDTH - 1: 0] base_addr_vertex,
+  input            [ADDR_WIDTH - 1: 0] base_addr_color,
+  input                         [31:0] triangles_count,
+  input                                frame_start,
+  output logic                         frame_end,
   /// DATA FETCH INTERFACE
-  output fetch_start,
-  output [ADDR_WIDTH-1:0]curr_addr_vertex,
-  output [ADDR_WIDTH-1:0]curr_addr_color,
-  input [COLOR_WIDTH-1:0]fetch_color,
-  input [COORD_WIDTH-1:0]fetch_vertexes[3][3],
-  input fetch_eoc,
+  output                               fetch_start,
+  output           [ADDR_WIDTH - 1: 0] curr_addr_vertex,
+  output           [ADDR_WIDTH - 1: 0] curr_addr_color,
+  input            [COLOR_WIDTH- 1: 0] fetch_color,
+  input            [COORD_WIDTH- 1: 0] fetch_vertexes[3][3],
+  input                                fetch_eoc,
   /// VERTEX COMPUTATION INTERFACE
-  output ver_start,
-  output logic [COORD_WIDTH-1:0]ver_vertexes[3][3],
-  input [COORD_WIDTH-1:0]ver_vertexes_proj[3][2],
-  input [COORD_WIDTH-1:0]ver_normal_vectors[3][2],
-  input ver_eoc,
+  output                               ver_start,
+  output logic    [COORD_WIDTH - 1: 0] ver_vertexes[3][3],
+  input           [COORD_WIDTH - 1: 0] ver_vertexes_proj[3][2],
+  input           [COORD_WIDTH - 1: 0] ver_normal_vectors[3][2],
+  input                                ver_eoc,
   /// PIXEL COMPUTATION INTERFACE
-  output pix_start,
-  output logic [COORD_WIDTH-1:0]pix_vertexes_proj[3][2],
-  output logic [COORD_WIDTH-1:0]pix_normal_vectors[3][2],
-  output logic [COLOR_WIDTH-1:0]pix_color,
-  input pix_eoc
+  output                               pix_start,
+  output logic    [COORD_WIDTH - 1: 0] pix_vertexes_proj[3][2],
+  output logic    [COORD_WIDTH - 1: 0] pix_normal_vectors[3][2],
+  output logic    [COLOR_WIDTH - 1: 0] pix_color,
+  input                                pix_eoc
 );
 
 /// STATE MACHINE
@@ -108,6 +108,7 @@ always_ff @(posedge clk or negedge reset_n) begin: data_flow_proc
     end
 end
 
+/// DATA CONTROL
 assign fetch_start  = next_triangle;
 assign ver_start    = next_triangle;
 assign pix_start    = next_triangle;
