@@ -42,11 +42,22 @@ module gpu_top #(
 	output [29:0] m_data,
 	output        m_startofpacket,
 	output        m_endofpacket,
-	output        m_empty,
+	output [1:0]  m_empty,
 	output        m_valid,
     input         m_ready
 );
 
+
+vga_master vga_master_i (
+    .clk            (pixel_clock    ),
+    .resetn         (pixel_resetn   ),
+    .m_data         (m_data         ),
+    .m_startofpacket(m_startofpacket),
+    .m_endofpacket  (m_endofpacket  ),
+    .m_empty        (m_empty        ),
+    .m_valid        (m_valid        ),
+    .m_ready        (m_ready        )
+);
 
 
 endmodule
