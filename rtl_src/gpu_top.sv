@@ -15,7 +15,7 @@ module gpu_top #(
   ////      Interface      /////
   //////////////////////////////
 
-  input      [AXI_ADDR_WIDTH-1:0] awaddr,
+  input          [ADDR_WIDTH-1:0] awaddr,
   input                     [2:0] awprot,
   input                           awvalid,
   output                          awready,
@@ -26,7 +26,7 @@ module gpu_top #(
   output                    [1:0] bresp,
   output                          bvalid,
   input                           bready,
-  input      [AXI_ADDR_WIDTH-1:0] araddr,
+  input          [ADDR_WIDTH-1:0] araddr,
   input                     [2:0] arprot,
   input                           arvalid,
   output                          arready,
@@ -87,8 +87,7 @@ data_fetch #(
 
 wire ver_start;
 wire [COORD_WIDTH-1:0]ver_vertexes[3][3];
-wire [COORD_WIDTH-1:0]ver_vertexes_proj[3][2];
-wire [COORD_WIDTH-1:0]ver_normal_vectors[3][2];
+wire [COORD_WIDTH-1:0]ver_bounds[3][3];
 wire ver_eoc;
 
 vertex_computation #(
@@ -96,18 +95,16 @@ vertex_computation #(
     .SCREEN_X_SIZE (SCREEN_X_SIZE),
     .SCREEN_Y_SIZE (SCREEN_Y_SIZE)
   ) ver_inst (
-    .clk            (clk               ),
-    .rst            (reset_n           ),
-    .start          (ver_start         ),
-    .vertexes       (ver_vertexes      ),
-    .vertexes_proj  (ver_vertexes_proj ),
-    .normal_vectors (ver_normal_vectors),
-    .eoc            (ver_eoc           )
+    .clk            (clk         ),
+    .reset_n        (reset_n     ),
+    .start          (ver_start   ),
+    .vertexes       (ver_vertexes),
+    .bounds         (pix_bounds  ),
+    .eoc            (ver_eoc     )
   );
 
 wire pix_start;
-wire [COORD_WIDTH-1:0]pix_vertexes_proj[3][2];
-wire [COORD_WIDTH-1:0]pix_normal_vectors[3][2];
+wire [COORD_WIDTH-1:0]pix_bounds[3][3];
 wire [COLOR_WIDTH-1:0]pix_color;
 wire pix_eoc;
 
@@ -118,13 +115,12 @@ pixel_computation #(
     .SCREEN_Y_SIZE (SCREEN_Y_SIZE),
     .CORES_COUNT   (CORES_COUNT  )
   ) pix_inst (
-    .clk            (clk               ),
-    .rst            (reset_n           ),
-    .start          (pix_start         ),
-    .vertexes_proj  (pix_vertexes_proj ),
-    .normal_vectors (pix_normal_vectors),
-    .color          (pix_color         ),
-    .eoc            (pix_eoc           )
+    .clk            (clk       ),
+    .reset_n        (reset_n   ),
+    .start          (pix_start ),
+    .bounds         (pix_bounds),
+    .color          (pix_color ),
+    .eoc            (pix_eoc   )
   );
 
 vga_master vga_master_i (

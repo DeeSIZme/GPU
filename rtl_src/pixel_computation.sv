@@ -5,13 +5,12 @@ module pixel_computation #(
   parameter SCREEN_Y_SIZE = 600,
   parameter CORES_COUNT = 10
 ) (
-    input clk,
-    input rst,
-    input start,
-    input [COORD_WIDTH-1:0]vertexes_proj[3][2],
-    input [COORD_WIDTH-1:0]normal_vectors[3][2],
-    input [COLOR_WIDTH-1:0]color,
-    output eoc
+    input                       clk,
+    input                       reset_n,
+    input                       start,
+    input     [COORD_WIDTH-1:0] bounds[3][3],
+    input     [COLOR_WIDTH-1:0] color,
+    output                      eoc
 );
 
 endmodule

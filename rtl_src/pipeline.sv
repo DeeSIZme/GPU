@@ -22,13 +22,11 @@ module pipeline #(
   /// VERTEX COMPUTATION INTERFACE
   output                               ver_start,
   output logic    [COORD_WIDTH - 1: 0] ver_vertexes[3][3],
-  input           [COORD_WIDTH - 1: 0] ver_vertexes_proj[3][2],
-  input           [COORD_WIDTH - 1: 0] ver_normal_vectors[3][2],
+  input           [COORD_WIDTH - 1: 0] ver_bounds[3][3],
   input                                ver_eoc,
   /// PIXEL COMPUTATION INTERFACE
   output                               pix_start,
-  output logic    [COORD_WIDTH - 1: 0] pix_vertexes_proj[3][2],
-  output logic    [COORD_WIDTH - 1: 0] pix_normal_vectors[3][2],
+  output logic    [COORD_WIDTH - 1: 0] pix_bounds[3][3],
   output logic    [COLOR_WIDTH - 1: 0] pix_color,
   input                                pix_eoc
 );
@@ -48,8 +46,8 @@ state_t next_state;
 
 always_comb begin: next_state_proc
   case (state)
-    IDLE      : next_state = !frame_start     ? IDLE : COMPUTING;
-    COMPUTING : next_state = !frame_end ? COMPUTING : IDLE;
+    IDLE      : next_state = !frame_start ? IDLE      : COMPUTING ;
+    COMPUTING : next_state = !frame_end   ? COMPUTING : IDLE      ;
   endcase
 end
 
@@ -89,10 +87,9 @@ always_ff @(posedge clk or negedge reset_n) begin: data_flow_proc
       ver_vertexes[i][0]        <= '0;
       ver_vertexes[i][1]        <= '0;
       ver_vertexes[i][2]        <= '0;
-      pix_vertexes_proj[i][0]   <= '0;
-      pix_vertexes_proj[i][1]   <= '0;
-      pix_normal_vectors[i][0]  <= '0;
-      pix_normal_vectors[i][1]  <= '0;
+      pix_bounds[i][0]   <= '0;
+      pix_bounds[i][1]   <= '0;
+      pix_bounds[i][2]   <= '0;
     end
     ver_color           <= '0;
     pix_color           <= '0;
@@ -101,8 +98,7 @@ always_ff @(posedge clk or negedge reset_n) begin: data_flow_proc
     if(next_triangle) begin
       curr_triangle       <= curr_triangle+1;
       ver_vertexes        <= fetch_vertexes;
-      pix_vertexes_proj   <= ver_vertexes_proj;
-      pix_normal_vectors  <= ver_normal_vectors;
+      pix_bounds          <= ver_bounds;
       ver_color           <= fetch_color;
       pix_color           <= ver_color;
     end
