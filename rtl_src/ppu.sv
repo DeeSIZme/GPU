@@ -2,7 +2,6 @@ module ppu #(
   parameter COORD_WIDTH = 16,
   parameter COLOR_WIDTH = 16
 ) (
-  input clk, resetn,
   input  [COORD_WIDTH -1: 0]x,
   input  [COORD_WIDTH -1: 0]y,
   input [COORD_WIDTH-1:0] bounds[3] [3],
@@ -29,7 +28,7 @@ endfunction
 
 
 wire [COORD_WIDTH - 1: 0] res[3];
-wire  res_sig[3];
+wire  res_sign[3];
 
 
 //////////////////////////////////////////
@@ -41,12 +40,12 @@ generate
   for(i = 0;i < 3; i++) begin
     assign res[i] = plane(x, y, bounds[i]);
 
-    assign res_sig[i] = res[i][COORD_WIDTH - 1];
+    assign res_sign[i] = res[i][COORD_WIDTH - 1];
   end
 endgenerate
 
 
 assign color_out = color_in;
-assign valid = (&res_sig || ~|res_sig);
+assign valid = (&res_sign || ~|res_sign);
 endmodule
 
