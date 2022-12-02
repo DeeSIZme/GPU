@@ -9,6 +9,7 @@ module pixel_computation #(
     input clk,
     input reset_n,
     input start,
+    output eoc,
 
 
     // bounds[i] . (x,y,1)  = res[i]
@@ -20,9 +21,8 @@ module pixel_computation #(
   
     output logic [COLOR_WIDTH-1:0]   ppu_data   [0:CORES_COUNT-1],
     output logic [BUFFER_ADDR_W-1:0] ppu_address[0:CORES_COUNT-1],
-    output logic                     ppu_valid  [0:CORES_COUNT-1],
+    output logic                     ppu_valid  [0:CORES_COUNT-1]
 
-    output eoc
 );
 typedef bit [COORD_WIDTH -1: 0] var_t;
 typedef logic [COORD_WIDTH -1: 0] var_reg_t;
@@ -36,14 +36,29 @@ localparam ITER_COUNT = SCREEN_X_SIZE * LINES_PER_PPU;
 localparam X_BITS = COORD_WIDTH;//$clog2(SCREEN_X_SIZE);
 localparam Y_BITS = COORD_WIDTH;//$clog2(SCREEN_Y_SIZE);
 
-
-
-
 var_reg_t ppu_y[0:CORES_COUNT-1];
 
-wire x_reset = x + 1 == SCREEN_X_SIZE;
-wire y_reset = (y + 1 == SCREEN_Y_SIZE) && x_reset;
-wire y_inc   = x_reset && !y_reset;
+
+logic computing;
+
+
+always@(posedge clk or negedge reset_n) 
+  if(!reset_n) begin
+    computing <= 0;
+  end
+  else begin
+    if(start)
+      computing <= 1;
+    if(eoc)
+      computing <= 0;
+  end
+
+assign eoc = (y + 1 == SCREEN_Y_SIZE) && x_reset;
+
+wire x_reset = !computing || x + 1 == SCREEN_X_SIZE;
+wire y_reset = !computing;
+wire y_inc   = computing && x_reset && !y_reset;
+
 
 var_reg_t x;
 var_reg_t y;
@@ -108,7 +123,7 @@ generate
           ppu_address[i] <= ppu_address[i] + 4;
 
         ppu_data[i] <= color_out;
-        ppu_valid[i] <= valid;
+        ppu_valid[i] <= computing && valid;
       end
     end
 
@@ -117,8 +132,6 @@ generate
       .COORD_WIDTH(COORD_WIDTH), 
       .COLOR_WIDTH(COLOR_WIDTH)
     ) ppui (
-      .clk      (clk      ), 
-      .resetn   (reset_n  ),
       .x        (x        ),
       .y        (ppu_y[i] ),
       .bounds   (bounds   ),
