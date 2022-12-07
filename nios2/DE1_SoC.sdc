@@ -17,9 +17,9 @@ create_clock -period "100 MHz" -name clk_dram [get_ports dram_clk]
 #create_clock -period "18.432 MHz" -name clk_audxck [get_ports aud_xck]
 #create_clock -period "1.536 MHz" -name clk_audbck [get_ports aud_bclk]
 # VGA : 640x480@60Hz
-create_clock -period "25.18 MHz" -name clk_vga [get_ports vga_clk]
+# create_clock -period "25.18 MHz" -name clk_vga [get_ports vga_clk]
 # VGA : 800x600@60Hz
-#create_clock -period "40.0 MHz" -name clk_vga [get_ports vga_clk]
+create_clock -period "40.0 MHz" -name clk_vga [get_ports vga_clk]
 # VGA : 1024x768@60Hz
 #create_clock -period "65.0 MHz" -name clk_vga [get_ports vga_clk]
 # VGA : 1280x1024@60Hz
@@ -89,8 +89,8 @@ set_output_delay -max -clock clk_vga 0.212  [get_ports vga_g*]
 set_output_delay -min -clock clk_vga -1.519 [get_ports vga_g*]
 set_output_delay -max -clock clk_vga 0.264  [get_ports vga_b*]
 set_output_delay -min -clock clk_vga -1.519 [get_ports vga_b*]
-set_output_delay -max -clock clk_vga 0.215  [get_ports vga_blank]
-set_output_delay -min -clock clk_vga -1.485 [get_ports vga_blank]
+set_output_delay -max -clock clk_vga 0.215  [get_ports vga_blank_n] 
+set_output_delay -min -clock clk_vga -1.485 [get_ports vga_blank_n] 
 
 #**************************************************************
 # Set Clock Groups

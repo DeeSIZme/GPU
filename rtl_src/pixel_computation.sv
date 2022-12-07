@@ -12,10 +12,12 @@ module pixel_computation #(
     output eoc,
 
 
-    // bounds[i] . (x,y,1)  = res[i]
+    // bound_coefs[i] . (x,y,1) + bound_const[i] = res[i]
     // if sign(res[i]) != sign(res[j]), 
     // the point is out of the trianle
-    input [COORD_WIDTH-1:0] bounds[3] [3],
+    input [COORD_WIDTH-1:0]   bound_coefs[3] [2],
+    input [2*COORD_WIDTH-1:0] bound_const[3],
+
 
     input [COLOR_WIDTH-1:0] color,
   
@@ -132,12 +134,13 @@ generate
       .COORD_WIDTH(COORD_WIDTH), 
       .COLOR_WIDTH(COLOR_WIDTH)
     ) ppui (
-      .x        (x        ),
-      .y        (ppu_y[i] ),
-      .bounds   (bounds   ),
-      .color_in (color_in ),
-      .color_out(color_out),
-      .valid    (valid)
+      .x          (x        ),
+      .y          (ppu_y[i] ),
+      .bound_coefs(bound_coefs),
+      .bound_const(bound_const),
+      .color_in   (color_in ),
+      .color_out  (color_out),
+      .valid      (valid)
     );
   end
 endgenerate
