@@ -17,7 +17,7 @@ assign eoc = '1;
 
 always_comb begin
   for (int i=0; i<3; ++i) begin
-        int j = (i+1)%3; // next vertex
+        automatic int j = (i+1)%3; // next vertex
         next_coefs[i][0] = vertexes[i][1] - vertexes[j][1] ;
         next_coefs[i][1] = vertexes[j][0] - vertexes[i][0] ;
   end

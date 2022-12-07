@@ -16,21 +16,21 @@ module ppu #(
   output                     valid
 );
 
-typedef bit [COORD_WIDTH -1: 0] var_t;
-typedef bit [2*COORD_WIDTH -1: 0] mul_res_t;
+typedef logic [COORD_WIDTH -1: 0] var_t;
+typedef logic [2*COORD_WIDTH -1: 0] mul_res_t;
+
 
 
 function mul_res_t plane(var_t x, var_t y, var_t bound_coefs[2], mul_res_t bound_const);
-  mul_res_t mul0 = ($signed(x) * $signed(bound_coefs[0]));
-  mul_res_t mul1 = ($signed(y) * $signed(bound_coefs[1]));
-
-  return mul0 + mul1 + bound_const;
+  return ($signed(x) * $signed(bound_coefs[0]))
+       + ($signed(y) * $signed(bound_coefs[1]))
+       + bound_const;
 endfunction
 
 
 
 mul_res_t res[3];
-wire  res_sign[3];
+wire [2:0] res_sign;
 
 
 //////////////////////////////////////////
@@ -39,7 +39,7 @@ wire  res_sign[3];
 generate
     // 3 planes
   genvar i;
-  for(i = 0;i < 3; i++) begin
+  for(i = 0;i < 3; i++) begin: eq_comp
     assign res[i] = plane(x, y, bound_coefs[i], bound_const[i]);
 
     assign res_sign[i] = res[i][2*COORD_WIDTH - 1];

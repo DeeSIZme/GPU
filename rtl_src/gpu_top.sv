@@ -65,8 +65,8 @@ wire [MADDR_WIDTH-1:0]base_addr_color;
 //TODO AXI target
 
 wire fetch_start;
-wire [MADDR_WIDTH-1:0]curr_addr_vertex;
-wire [MADDR_WIDTH-1:0]curr_addr_color;
+logic [MADDR_WIDTH-1:0]curr_addr_vertex;
+logic [MADDR_WIDTH-1:0]curr_addr_color;
 wire [COLOR_WIDTH-1:0]fetch_color;
 wire [COORD_WIDTH-1:0]fetch_vertexes[3][3];
 wire fetch_eoc;
@@ -86,7 +86,7 @@ data_fetch #(
   );
 
 wire ver_start;
-wire [COORD_WIDTH-1:0]ver_vertexes[3][3];
+logic [COORD_WIDTH-1:0]ver_vertexes[3][3];
 wire [COORD_WIDTH-1:0]ver_bound_coefs[3][2];
 wire [2*COORD_WIDTH-1:0]ver_bound_const[3];
 wire ver_eoc;
@@ -100,15 +100,15 @@ vertex_computation #(
     .reset_n        (reset_n        ),
     .start          (ver_start      ),
     .vertexes       (ver_vertexes   ),
-    .bound_coefs    (pix_bound_coefs),
-    .bound_const    (pix_bound_const),
+    .bound_coefs    (ver_bound_coefs),
+    .bound_const    (ver_bound_const),
     .eoc            (ver_eoc        )
   );
 
 wire pix_start;
-wire [COORD_WIDTH-1:0]pix_bound_coefs[3][2];
-wire [2*COORD_WIDTH-1:0]pix_bound_const[3];
-wire [COLOR_WIDTH-1:0]pix_color;
+logic [COORD_WIDTH-1:0]pix_bound_coefs[3][2];
+logic [2*COORD_WIDTH-1:0]pix_bound_const[3];
+logic [COLOR_WIDTH-1:0]pix_color;
 wire pix_eoc;
 
 
@@ -170,16 +170,6 @@ pixel_computation #(
 
 
 
-pipeline #(
-  .ADDR_WIDTH  (MADDR_WIDTH ),
-  .COORD_WIDTH (COORD_WIDTH),
-  .COLOR_WIDTH (COLOR_WIDTH),
-  .VERTEX_SIZE (VERTEX_SIZE)
-  ) pipeline_inst (.*);
-
-
-
-
 vga_master #(
     .VGA_WIDTH    (SCREEN_X_SIZE),
     .VGA_HEIGHT   (SCREEN_Y_SIZE),
@@ -198,8 +188,95 @@ vga_master #(
     .clk             (clk),
     .rdata           (vga_mem_rdata),
     .raddress        (vga_mem_raddress),
-    .rselect         (vga_mem_rselect),
+    .rselect         (vga_mem_rselect)
 );
+
+
+
+///////////////// @todo change this monstruosity
+
+/// STATE MACHINE
+logic [31:0]curr_triangle;
+
+wire global_eoc       = fetch_eoc && ver_eoc && pix_eoc;
+wire is_last_triangle = curr_triangle == triangles_count-1;
+
+wire next_triangle    = global_eoc && !is_last_triangle;
+assign frame_end      = global_eoc && is_last_triangle;
+
+typedef enum logic {IDLE, COMPUTING} state_t;
+state_t state;
+state_t next_state;
+
+always_comb begin: next_state_proc
+  case (state)
+    IDLE      : next_state = !frame_start ? IDLE      : COMPUTING ;
+    COMPUTING : next_state = !frame_end   ? COMPUTING : IDLE      ;
+  endcase
+end
+
+always_ff @(posedge clk or negedge reset_n) begin: state_proc
+  if (!reset_n)
+    state <= IDLE;
+  else
+    state <= next_state;
+end
+
+/// ADRESSES
+always_ff @(posedge clk or negedge reset_n) begin: addr_proc
+  if (!reset_n) begin
+    curr_addr_vertex <= 0;
+    curr_addr_color  <= 0;
+  end
+  else begin
+    if(frame_start) begin
+      curr_addr_vertex <= base_addr_vertex;
+      curr_addr_color  <= base_addr_color;
+    end
+    else begin
+      curr_addr_vertex <= curr_addr_vertex + VERTEX_SIZE;
+      curr_addr_color  <= curr_addr_color  + COLOR_WIDTH;
+    end
+  end
+end
+
+/// DATA FLOW
+logic [COLOR_WIDTH-1:0]ver_color;
+
+always_ff @(posedge clk or negedge reset_n) begin: data_flow_proc
+  if (!reset_n) begin
+    curr_triangle       <= '0;
+    for (int i=3; i<3; ++i) begin
+      ver_vertexes[i][0]        <= '0;
+      ver_vertexes[i][1]        <= '0;
+      ver_vertexes[i][2]        <= '0;
+      pix_bound_coefs[i][0]     <= '0;
+      pix_bound_coefs[i][1]     <= '0;
+      pix_bound_const[0]        <= '0;
+      pix_bound_const[1]        <= '0;
+      pix_bound_const[2]        <= '0;
+    end
+    ver_color           <= '0;
+    pix_color           <= '0;
+  end
+  else
+    if(next_triangle) begin
+      curr_triangle       <= curr_triangle+1;
+      ver_vertexes        <= fetch_vertexes;
+      pix_bound_coefs     <= ver_bound_coefs;
+      pix_bound_const     <= ver_bound_const;
+      ver_color           <= fetch_color;
+      pix_color           <= ver_color;
+    end
+end
+
+/// DATA CONTROL
+assign fetch_start  = next_triangle;
+assign ver_start    = next_triangle;
+assign pix_start    = next_triangle;
+
+
+
 
 
 endmodule
