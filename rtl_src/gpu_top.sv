@@ -1,5 +1,6 @@
 module gpu_top #(
-  parameter ADDR_WIDTH    = 32,
+  parameter SADDR_WIDTH   = 32,
+  parameter MADDR_WIDTH   = 32,
   parameter COORD_WIDTH   = 16,
   parameter COLOR_WIDTH   = 16,
   parameter VERTEX_SIZE   = 6, // in byte
@@ -15,7 +16,7 @@ module gpu_top #(
   ////      Interface      /////
   //////////////////////////////
 
-  input          [ADDR_WIDTH-1:0] awaddr,
+  input          [SADDR_WIDTH-1:0] awaddr,
   input                     [2:0] awprot,
   input                           awvalid,
   output                          awready,
@@ -26,7 +27,7 @@ module gpu_top #(
   output                    [1:0] bresp,
   output                          bvalid,
   input                           bready,
-  input          [ADDR_WIDTH-1:0] araddr,
+  input          [SADDR_WIDTH-1:0] araddr,
   input                     [2:0] arprot,
   input                           arvalid,
   output                          arready,
@@ -36,8 +37,8 @@ module gpu_top #(
   input                           rready,
 
   //////////////////////////////
-  //// Avalon Stream Maser /////
-  ////      Interface      /////
+  ////  VGA Avalon Stream  /////
+  ////   Maser Interface   /////
   //////////////////////////////
 
   input                           pixel_clock,
@@ -45,7 +46,6 @@ module gpu_top #(
   output                   [29:0] m_data,
   output                          m_startofpacket,
   output                          m_endofpacket,
-  output                          m_empty,
   output                          m_valid,
   input                           m_ready,
 
@@ -59,20 +59,20 @@ module gpu_top #(
 wire frame_end;
 wire frame_start;
 wire [31:0]triangles_count;
-wire [ADDR_WIDTH-1:0]base_addr_vertex;
-wire [ADDR_WIDTH-1:0]base_addr_color;
+wire [MADDR_WIDTH-1:0]base_addr_vertex;
+wire [MADDR_WIDTH-1:0]base_addr_color;
 
 //TODO AXI target
 
 wire fetch_start;
-wire [ADDR_WIDTH-1:0]curr_addr_vertex;
-wire [ADDR_WIDTH-1:0]curr_addr_color;
+wire [MADDR_WIDTH-1:0]curr_addr_vertex;
+wire [MADDR_WIDTH-1:0]curr_addr_color;
 wire [COLOR_WIDTH-1:0]fetch_color;
 wire [COORD_WIDTH-1:0]fetch_vertexes[3][3];
 wire fetch_eoc;
 
 data_fetch #(
-    .ADDR_WIDTH  (ADDR_WIDTH ),
+    .ADDR_WIDTH  (MADDR_WIDTH ),
     .COORD_WIDTH (COORD_WIDTH)
   ) fetch_inst (
     .clk         (clk             ),
@@ -111,38 +111,95 @@ wire [2*COORD_WIDTH-1:0]pix_bound_const[3];
 wire [COLOR_WIDTH-1:0]pix_color;
 wire pix_eoc;
 
+
+//localparam BUFFER_ADDR_W = $clog2(SCREEN_X_SIZE * SCREEN_Y_SIZE / CORES_COUNT);
+localparam BUFFER_ADDR_W = 32;
+
+
+logic [COLOR_WIDTH-1:0]   ppu_data   [0:CORES_COUNT-1];
+logic [BUFFER_ADDR_W-1:0] ppu_address[0:CORES_COUNT-1];
+logic                     ppu_valid  [0:CORES_COUNT-1];
+
+
+logic [COLOR_WIDTH-1:0]         vga_mem_rdata;
+logic [BUFFER_ADDR_W-1:0]       vga_mem_raddress;
+logic [$clog2(CORES_COUNT)-1:0] vga_mem_rselect;
+
+
 pixel_computation #(
     .COORD_WIDTH   (COORD_WIDTH  ),
     .COLOR_WIDTH   (COLOR_WIDTH  ),
     .SCREEN_X_SIZE (SCREEN_X_SIZE),
     .SCREEN_Y_SIZE (SCREEN_Y_SIZE),
-    .CORES_COUNT   (CORES_COUNT  )
+    .CORES_COUNT   (CORES_COUNT  ),
+    .BUFFER_ADDR_W (BUFFER_ADDR_W)
   ) pix_inst (
     .clk            (clk       ),
     .reset_n        (reset_n   ),
     .start          (pix_start ),
     .bound_coefs    (pix_bound_coefs),
     .bound_const    (pix_bound_const),
+    .ppu_data       (ppu_data  ),
+    .ppu_address    (ppu_address),
+    .ppu_valid      (ppu_valid ),
     .color          (pix_color ),
     .eoc            (pix_eoc   )
   );
 
-vga_master vga_master_i (
-  .clk             (pixel_clock    ),
-  .resetn          (pixel_resetn   ),
-  .m_data          (m_data         ),
-  .m_startofpacket (m_startofpacket),
-  .m_endofpacket   (m_endofpacket  ),
-  .m_empty         (m_empty        ),
-  .m_valid         (m_valid        ),
-  .m_ready         (m_ready        )
-);
+  ppu_memories #(
+    .COLOR_WIDTH  (COLOR_WIDTH  ),
+    .SCREEN_X_SIZE(SCREEN_X_SIZE),
+    .SCREEN_Y_SIZE(SCREEN_Y_SIZE),
+    .CORES_COUNT  (CORES_COUNT  ),
+    .BUFFER_ADDR_W(BUFFER_ADDR_W)
+  ) ppu_mem_i (
+    .clk     (clk), 
+    .reset_n (reset_n),
+
+    // write ports
+    .wdata   (ppu_data   ),
+    .waddress(ppu_address),
+    .wvalid  (ppu_valid  ),
+
+
+    // read port
+    .rdata   (vga_mem_rdata),
+    .raddress(vga_mem_raddress),
+    .rselect (vga_mem_rselect)
+  );
+
+
 
 pipeline #(
-  .ADDR_WIDTH  (ADDR_WIDTH ),
+  .ADDR_WIDTH  (MADDR_WIDTH ),
   .COORD_WIDTH (COORD_WIDTH),
   .COLOR_WIDTH (COLOR_WIDTH),
   .VERTEX_SIZE (VERTEX_SIZE)
   ) pipeline_inst (.*);
+
+
+
+
+vga_master #(
+    .VGA_WIDTH    (SCREEN_X_SIZE),
+    .VGA_HEIGHT   (SCREEN_Y_SIZE),
+    .CORES_COUNT  (CORES_COUNT  ),
+    .BUFFER_ADDR_W(BUFFER_ADDR_W),
+    .COLOR_WIDTH  (COLOR_WIDTH  )
+  ) vga_master_i (
+    .vga_clk         (pixel_clock    ),
+    .resetn          (pixel_resetn   ),
+    .m_data          (m_data         ),
+    .m_startofpacket (m_startofpacket),
+    .m_endofpacket   (m_endofpacket  ),
+    .m_valid         (m_valid        ),
+    .m_ready         (m_ready        ),
+
+    .clk             (clk),
+    .rdata           (vga_mem_rdata),
+    .raddress        (vga_mem_raddress),
+    .rselect         (vga_mem_rselect),
+);
+
 
 endmodule

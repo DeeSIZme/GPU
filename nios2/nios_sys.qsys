@@ -147,6 +147,14 @@
          type = "String";
       }
    }
+   element nios_sys
+   {
+      datum _originalDeviceFamily
+      {
+         value = "Cyclone V";
+         type = "String";
+      }
+   }
    element pixel_clock
    {
       datum _sortIndex
@@ -213,13 +221,21 @@
    internal="pixel_clock.clk_in_reset"
    type="reset"
    dir="end" />
+ <interface name="timer_s1" internal="timer.s1" />
  <interface
    name="video_vga_controller_0_external_interface"
    internal="video_vga_controller_0.external_interface"
    type="conduit"
    dir="end" />
  <module name="GPU_0" kind="GPU" version="1.0" enabled="1">
-  <parameter name="AXI_ADDR_WIDTH" value="7" />
+  <parameter name="COLOR_WIDTH" value="16" />
+  <parameter name="COORD_WIDTH" value="16" />
+  <parameter name="CORES_COUNT" value="1" />
+  <parameter name="MADDR_WIDTH" value="32" />
+  <parameter name="SADDR_WIDTH" value="32" />
+  <parameter name="SCREEN_X_SIZE" value="640" />
+  <parameter name="SCREEN_Y_SIZE" value="480" />
+  <parameter name="VERTEX_SIZE" value="6" />
  </module>
  <module
    name="OnChipMem"

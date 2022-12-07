@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <EnsembleReport name="nios_sys" kind="nios_sys" version="1.0" fabric="QSYS">
  <!-- Format version 21.1 850 (Future versions may contain additional information.) -->
- <!-- 2022.11.30.14:45:37 -->
+ <!-- 2022.12.07.13:54:19 -->
  <!-- A collection of modules and connections -->
  <parameter name="AUTO_GENERATION_ID">
   <type>java.lang.Integer</type>
-  <value>1669815937</value>
+  <value>1670417659</value>
   <derived>false</derived>
   <enabled>true</enabled>
   <visible>false</visible>
@@ -128,9 +128,65 @@
  <module name="GPU_0" kind="GPU" version="1.0" path="GPU_0">
   <!-- Describes a single module. Module parameters are
 the requested settings for a module instance. -->
-  <parameter name="AXI_ADDR_WIDTH">
+  <parameter name="SADDR_WIDTH">
    <type>int</type>
-   <value>7</value>
+   <value>32</value>
+   <derived>false</derived>
+   <enabled>true</enabled>
+   <visible>true</visible>
+   <valid>true</valid>
+  </parameter>
+  <parameter name="MADDR_WIDTH">
+   <type>int</type>
+   <value>32</value>
+   <derived>false</derived>
+   <enabled>true</enabled>
+   <visible>true</visible>
+   <valid>true</valid>
+  </parameter>
+  <parameter name="COORD_WIDTH">
+   <type>int</type>
+   <value>16</value>
+   <derived>false</derived>
+   <enabled>true</enabled>
+   <visible>true</visible>
+   <valid>true</valid>
+  </parameter>
+  <parameter name="COLOR_WIDTH">
+   <type>int</type>
+   <value>16</value>
+   <derived>false</derived>
+   <enabled>true</enabled>
+   <visible>true</visible>
+   <valid>true</valid>
+  </parameter>
+  <parameter name="VERTEX_SIZE">
+   <type>int</type>
+   <value>6</value>
+   <derived>false</derived>
+   <enabled>true</enabled>
+   <visible>true</visible>
+   <valid>true</valid>
+  </parameter>
+  <parameter name="SCREEN_X_SIZE">
+   <type>int</type>
+   <value>640</value>
+   <derived>false</derived>
+   <enabled>true</enabled>
+   <visible>true</visible>
+   <valid>true</valid>
+  </parameter>
+  <parameter name="SCREEN_Y_SIZE">
+   <type>int</type>
+   <value>480</value>
+   <derived>false</derived>
+   <enabled>true</enabled>
+   <visible>true</visible>
+   <valid>true</valid>
+  </parameter>
+  <parameter name="CORES_COUNT">
+   <type>int</type>
+   <value>1</value>
    <derived>false</derived>
    <enabled>true</enabled>
    <visible>true</visible>
@@ -268,7 +324,7 @@ parameters are a RESULT of the module parameters. -->
    <type>clock</type>
    <isStart>false</isStart>
    <port>
-    <name>aclk</name>
+    <name>clk</name>
     <direction>Input</direction>
     <width>1</width>
     <role>clk</role>
@@ -429,7 +485,7 @@ parameters are a RESULT of the module parameters. -->
    </parameter>
    <parameter name="addressSpan">
     <type>java.math.BigInteger</type>
-    <value>128</value>
+    <value>4294967296</value>
     <derived>true</derived>
     <enabled>true</enabled>
     <visible>false</visible>
@@ -440,7 +496,7 @@ parameters are a RESULT of the module parameters. -->
    <port>
     <name>awaddr</name>
     <direction>Input</direction>
-    <width>7</width>
+    <width>32</width>
     <role>awaddr</role>
    </port>
    <port>
@@ -506,7 +562,7 @@ parameters are a RESULT of the module parameters. -->
    <port>
     <name>araddr</name>
     <direction>Input</direction>
-    <width>7</width>
+    <width>32</width>
     <role>araddr</role>
    </port>
    <port>
@@ -636,7 +692,7 @@ parameters are a RESULT of the module parameters. -->
    <type>reset</type>
    <isStart>false</isStart>
    <port>
-    <name>aresetn</name>
+    <name>reset_n</name>
     <direction>Input</direction>
     <width>1</width>
     <role>reset_n</role>

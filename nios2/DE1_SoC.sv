@@ -148,8 +148,8 @@ assign    ledr        =    '0;
 wire vga_sync;
 wire vga_blank;
 
-assign vga_sync_n = !vga_sync;
-assign vga_blank_n = !vga_blank;
+assign vga_sync_n = vga_sync;
+assign vga_blank_n = vga_blank;
 
 nios_sys soc (
   .clk_0_clk       ( clock_50 ) ,
