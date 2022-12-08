@@ -112,7 +112,6 @@ immediately after the previous endofpacket signal.
   wire y_rst    = x_rst && (y + 1 == VGA_HEIGHT);
   wire ppuy_rst = x_rst && (ppuy + 1 == VGA_HEIGHT / CORES_COUNT);
 
-  always @* assert (y_rst == vga_end);
 
 
   wire [31:0] nx = x_rst ? 0 : x + 1;

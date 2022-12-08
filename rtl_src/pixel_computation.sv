@@ -67,7 +67,7 @@ module pixel_computation #(
 
 
   always_ff @(posedge clk or posedge reset_n) begin
-    if (reset_n) begin
+    if (!reset_n) begin
       x <= 0;
       y <= 0;
     end else begin
@@ -102,7 +102,7 @@ module pixel_computation #(
       // memory access
 
       always_ff @(posedge clk or posedge reset_n) begin
-        if (reset_n) begin
+        if (!reset_n) begin
           ppu_data[i]    <= 0;
           ppu_address[i] <= 0;
           ppu_valid[i]   <= 0;
