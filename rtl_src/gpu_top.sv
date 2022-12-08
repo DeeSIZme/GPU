@@ -95,7 +95,7 @@ module gpu_top #(
   wire [MADDR_WIDTH-1:0] base_addr_color;
   wire [31:0]global_state = '0; //TODO will be transmetted to the CPU when it reads the control register
   wire interrupt_ack;  //TODO generate irq
-
+/*
   target #(
       .MADDR_WIDTH(MADDR_WIDTH),
       .SADDR_WIDTH(SADDR_WIDTH)
@@ -128,15 +128,15 @@ module gpu_top #(
       .rvalid_s(rvalid_s),
       .rready_s(rready_s)
   );
-
+*/
   wire fetch_start;
   logic [MADDR_WIDTH-1:0] curr_addr_vertex;
   logic [MADDR_WIDTH-1:0] curr_addr_color;
   wire [COLOR_WIDTH-1:0] fetch_color;
   wire [COORD_WIDTH-1:0] fetch_vertexes[3][3];
-  wire fetch_eoc;
+  wire fetch_eoc = 1;
 
-
+/*
   data_fetch #(
       .MADDR_WIDTH(MADDR_WIDTH),
       .COORD_WIDTH(COORD_WIDTH),
@@ -171,6 +171,36 @@ module gpu_top #(
       .rvalid_m (rvalid_m),
       .rready_m (rready_m)
   );
+*/
+  
+  //./ test0: start signal strobes on reset fall
+  logic global_start;
+
+  assign fetch_color    = '1; // white
+
+  assign fetch_vertexes[0][0] = 16'd0;
+  assign fetch_vertexes[0][1] = 16'd0;
+  assign fetch_vertexes[0][2] = 16'd0;
+
+  assign fetch_vertexes[1][0] = 16'd800;
+  assign fetch_vertexes[1][1] = 16'd000;
+  assign fetch_vertexes[1][2] = 16'd0;
+
+  assign fetch_vertexes[2][0] = 16'd800;
+  assign fetch_vertexes[2][1] = 16'd600;
+  assign fetch_vertexes[2][2] = 16'd0;
+
+  always_ff @(posedge clk or negedge reset_n) begin
+    logic global_start_next;
+    if(!reset_n) begin
+      global_start_next <= '1;
+      global_start      <= '0;
+    end
+    else begin
+      global_start      <= global_start_next;
+      global_start_next <= '0;
+    end
+  end
 
 
   wire ver_start;
@@ -289,7 +319,7 @@ module gpu_top #(
   wire global_eoc = fetch_eoc && ver_eoc && pix_eoc;
   wire is_last_triangle = curr_triangle == triangles_count - 1;
 
-  wire next_triangle = global_eoc && !is_last_triangle;
+  wire next_triangle = global_eoc && !is_last_triangle || global_start;
   assign frame_end = global_eoc && is_last_triangle;
 
   typedef enum logic {

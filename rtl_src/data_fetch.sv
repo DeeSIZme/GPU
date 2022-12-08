@@ -85,12 +85,12 @@ module data_fetch #(
       default:     araddr_m = '0;
     endcase
   end
+  logic raddr_ok_m;
 
   assign arprot_m  = '0;
   assign arvalid_m = !raddr_ok_m && (state == READ_VERTEX || state == READ_COLORS);
   assign rready_m  = 1;
 
-  logic raddr_ok_m;
   wire  next_raddr_ok_m;
   assign next_raddr_ok_m = raddr_ok_m ? !R_handshake_m : AR_handshake_m;
 

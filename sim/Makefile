@@ -22,7 +22,7 @@ tb_files      :=  $(shell find $(tb_dir) -name "*.sv")
 tb_files_done := $(patsubst $(tb_dir)%.sv, .%.done, $(tb_files))
 
 
-top_tb_files_done := .video_if.done .pkg_vga.done .screen.done .top_tb.done
+top_tb_files_done := .top_tb.done
 vga_tb_files_done := .vga_master.done .vga_master_tb.done .async_fifo.done
 
 top: $(top_tb_files_done) work
@@ -41,14 +41,16 @@ vga_master:
 .nios_sys.done: ../nios2/nios_sys/synthesis/nios_sys.v
 	$(VLOG_CMD) $< &&  touch $@
 
-.%.done:$(syn_dir)%.v | work
-	$(VLOG_CMD) $< &&  touch $@
-.%.done:$(syn_dir)%.sv | work
-	$(VLOG_CMD) $< &&  touch $@
+
 
 .%.done:../rtl_src/%.v | work
 	$(VLOG_CMD) $< &&  touch $@
 .%.done:../rtl_src/%.sv | work
+	$(VLOG_CMD) $< &&  touch $@
+
+.%.done:$(syn_dir)%.v | work
+	$(VLOG_CMD) $< &&  touch $@
+.%.done:$(syn_dir)%.sv | work
 	$(VLOG_CMD) $< &&  touch $@
 
 
