@@ -29,7 +29,7 @@ module vertex_computation #(
       for (int i = 0; i < 3; ++i) begin
         bound_coefs[i][0] <= next_coefs[i][0];
         bound_coefs[i][1] <= next_coefs[i][1];
-        bound_const[i] <= -(next_coefs[i][0] * vertexes[i][0] + next_coefs[i][1] * vertexes[i][1]);
+        bound_const[i] <= -($signed(next_coefs[i][0]) * $signed(vertexes[i][0]) + $signed(next_coefs[i][1]) * $signed(vertexes[i][1]));
       end
     end
   end

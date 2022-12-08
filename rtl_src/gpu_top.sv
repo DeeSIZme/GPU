@@ -90,7 +90,7 @@ module gpu_top #(
 
   wire frame_end;
   wire frame_start;
-  wire [31:0] triangles_count;
+  wire [31:0] triangles_count = 32'hFFFFFFFF;
   wire [MADDR_WIDTH-1:0] base_addr_vertex;
   wire [MADDR_WIDTH-1:0] base_addr_color;
   wire [31:0]global_state = '0; //TODO will be transmetted to the CPU when it reads the control register
@@ -172,7 +172,7 @@ module gpu_top #(
       .rready_m (rready_m)
   );
 */
-  
+
   //./ test0: start signal strobes on reset fall
   logic global_start;
 
@@ -357,6 +357,8 @@ module gpu_top #(
     end
   end
 
+  // @todo
+  assign frame_start = global_start;
   /// DATA FLOW
   logic [COLOR_WIDTH-1:0] ver_color;
 
