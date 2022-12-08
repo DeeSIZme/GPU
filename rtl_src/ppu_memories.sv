@@ -20,13 +20,13 @@ module ppu_memories #(
     input     [$clog2(CORES_COUNT)-1:0] rselect
 );
 
-localparam MEMORY_SIZE = COLOR_WIDTH * SCREEN_X_SIZE * SCREEN_Y_SIZE;
+localparam MEMORY_SIZE = SCREEN_X_SIZE * SCREEN_Y_SIZE;
 
 logic [COLOR_WIDTH-1:0] mem_out[0:CORES_COUNT-1];
 
 generate
     genvar i;
-    for(i = 0; i < CORES_COUNT; i++) begin
+    for(i = 0; i < CORES_COUNT; i++) begin: mem_units
         // memory instanciation
         
         logic [COLOR_WIDTH-1:0] mem[MEMORY_SIZE / CORES_COUNT];
@@ -35,7 +35,7 @@ generate
         always_ff @(posedge clk) begin
             mem_out[i] <= mem[raddress];
 
-            if(wvalid)
+            if(wvalid[i])
                 mem[waddress[i]] <= wdata[i];
         end
     end

@@ -26,7 +26,7 @@ module pixel_computation #(
     output logic                     ppu_valid  [0:CORES_COUNT-1]
 
 );
-typedef bit [COORD_WIDTH -1: 0] var_t;
+typedef logic [COORD_WIDTH -1: 0] var_t;
 typedef logic [COORD_WIDTH -1: 0] var_reg_t;
 
 
@@ -55,15 +55,19 @@ always@(posedge clk or negedge reset_n)
       computing <= 0;
   end
 
-assign eoc = (y + 1 == SCREEN_Y_SIZE) && x_reset;
-
-wire x_reset = !computing || x + 1 == SCREEN_X_SIZE;
-wire y_reset = !computing;
-wire y_inc   = computing && x_reset && !y_reset;
 
 
 var_reg_t x;
 var_reg_t y;
+
+
+wire x_reset = !computing || x + 1 == SCREEN_X_SIZE;
+wire y_reset = !computing;
+
+assign eoc = (y + 1 == SCREEN_Y_SIZE) && x_reset;
+
+wire y_inc   = computing && x_reset && !y_reset;
+
 
 always_ff @(posedge clk or posedge reset_n) begin
   if(reset_n) begin
@@ -73,10 +77,10 @@ always_ff @(posedge clk or posedge reset_n) begin
     if(x_reset) 
       x <= '0;
     else
-      x <= x + 1;
+      x <= x + 16'h1;
 
     if(y_inc)
-      y <= y + 1;
+      y <= y + 16'h1;
     else if(y_inc)
       y <= 0;
   end
@@ -90,7 +94,7 @@ end
 
 generate
   genvar i;
-  for(i = 0;i < CORES_COUNT; i++) begin
+  for(i = 0;i < CORES_COUNT; i++) begin: pppus
 
     var_t y_base = LINES_PER_PPU * i;
     
@@ -113,7 +117,7 @@ generate
         ppu_y[i] <= y_base;
       end else begin
         if(y_inc) begin
-          ppu_y[i] <= ppu_y[i] + 1;
+          ppu_y[i] <= ppu_y[i] + 16'h1;
         end
         if(y_reset) begin
           ppu_y[i] <= y_base;
@@ -122,7 +126,7 @@ generate
         if(y_reset)
           ppu_address[i] <= '0;
         else
-          ppu_address[i] <= ppu_address[i] + 4;
+          ppu_address[i] <= ppu_address[i];
 
         ppu_data[i] <= color_out;
         ppu_valid[i] <= computing && valid;
