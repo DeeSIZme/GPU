@@ -15,7 +15,7 @@ module target #(
 
   /********* SLAVE **************/
   // Write Address Channel
-  input   logic  [SADDR_WIDTH-1:0]  awaddr_s,
+  input   logic        [SADDR_WIDTH-1:0] awaddr_s,
   input   logic  [2:0]                   awprot_s,
   input   logic                         awvalid_s,
   output  logic                         awready_s,
@@ -29,7 +29,7 @@ module target #(
   output  logic                          bvalid_s,
   input   logic                          bready_s,
   // Read Address Channel
-  input   logic  [SADDR_WIDTH-1:0]  araddr_s,
+  input   logic        [SADDR_WIDTH-1:0] araddr_s,
   input   logic  [2:0]                   arprot_s,
   input   logic                         arvalid_s,
   output  logic                         arready_s,
