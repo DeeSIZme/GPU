@@ -95,8 +95,8 @@ module gpu_top #(
   //TODO AXI target
 
   wire fetch_start;
-  wire [MADDR_WIDTH-1:0] curr_addr_vertex;
-  wire [MADDR_WIDTH-1:0] curr_addr_color;
+  logic [MADDR_WIDTH-1:0] curr_addr_vertex;
+  logic [MADDR_WIDTH-1:0] curr_addr_color;
   wire [COLOR_WIDTH-1:0] fetch_color;
   wire [COORD_WIDTH-1:0] fetch_vertexes[3][3];
   wire fetch_eoc;
@@ -136,7 +136,7 @@ module gpu_top #(
   );
 
   wire ver_start;
-  wire [COORD_WIDTH-1:0] ver_vertexes[3][3];
+  logic [COORD_WIDTH-1:0] ver_vertexes[3][3];
   wire [COORD_WIDTH-1:0] ver_bound_coefs[3][2];
   wire [2*COORD_WIDTH-1:0] ver_bound_const[3];
   wire ver_eoc;
@@ -156,11 +156,10 @@ module gpu_top #(
   );
 
   wire pix_start;
-  wire [COORD_WIDTH-1:0] pix_bound_coefs[3][2];
-  wire [2*COORD_WIDTH-1:0] pix_bound_const[3];
-  wire [COLOR_WIDTH-1:0] pix_color;
+  logic [COORD_WIDTH-1:0] pix_bound_coefs[3][2];
+  logic [2*COORD_WIDTH-1:0] pix_bound_const[3];
+  logic [COLOR_WIDTH-1:0] pix_color;
   wire pix_eoc;
-
 
   //localparam BUFFER_ADDR_W = $clog2(SCREEN_X_SIZE * SCREEN_Y_SIZE / CORES_COUNT);
   localparam BUFFER_ADDR_W = 32;
