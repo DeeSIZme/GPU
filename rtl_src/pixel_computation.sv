@@ -49,7 +49,7 @@ module pixel_computation #(
       computing <= 0;
     end else begin
       if (start) computing <= 1;
-      if (eoc) computing <= 0;
+      else if (eoc) computing <= 0;
     end
 
 
@@ -59,14 +59,14 @@ module pixel_computation #(
 
 
   wire x_reset = !computing || x + 1 == SCREEN_X_SIZE;
-  wire y_reset = !computing;
+  wire y_reset = eoc;
 
   assign eoc = (y + 1 == SCREEN_Y_SIZE) && x_reset;
 
   wire y_inc = computing && x_reset && !y_reset;
 
 
-  always_ff @(posedge clk or posedge reset_n) begin
+  always_ff @(posedge clk or negedge reset_n) begin
     if (!reset_n) begin
       x <= 0;
       y <= 0;
@@ -80,11 +80,6 @@ module pixel_computation #(
   end
 
 
-  // external
-  //logic [COLOR_WIDTH-1:0] ppu_buffers[0:CORES_COUNT-1];
-
-
-
   generate
     genvar i;
     for (i = 0; i < CORES_COUNT; i++) begin : pppus
@@ -95,13 +90,11 @@ module pixel_computation #(
       wire [COLOR_WIDTH-1:0] color_out;
       wire valid;
 
-      logic [BUFFER_ADDR_W-1:0] buf_addr;
-
 
 
       // memory access
 
-      always_ff @(posedge clk or posedge reset_n) begin
+      always_ff @(posedge clk or negedge reset_n) begin
         if (!reset_n) begin
           ppu_data[i]    <= 0;
           ppu_address[i] <= 0;
@@ -117,7 +110,7 @@ module pixel_computation #(
           end
 
           if (y_reset) ppu_address[i] <= '0;
-          else ppu_address[i] <= ppu_address[i];
+          else ppu_address[i] <= ppu_address[i] + 1;
 
           ppu_data[i]  <= color_out;
           ppu_valid[i] <= computing && valid;
