@@ -14,29 +14,29 @@ module data_fetch #(
 
     /********* AXI MASTER **************/
     // Write Address Channel
-    output logic [      MADDR_WIDTH-1:0] awaddr_m,
-    output logic [                  2:0] awprot_m,
-    output logic                         awvalid_m,
-    input  logic                         awready_m,
+    output logic [MADDR_WIDTH-1:0] awaddr_m,
+    output logic [            2:0] awprot_m,
+    output logic                   awvalid_m,
+    input  logic                   awready_m,
     // Write Data Channel
-    output logic                         wvalid_m,
-    input  logic                         wready_m,
-    output logic [                 31:0] wdata_m,
-    output logic [                  3:0] wstrb_m,
+    output logic                   wvalid_m,
+    input  logic                   wready_m,
+    output logic [           31:0] wdata_m,
+    output logic [            3:0] wstrb_m,
     // Write Response Channel
-    input  logic [                  1:0] bresp_m,
-    input  logic                         bvalid_m,
-    output logic                         bready_m,
+    input  logic [            1:0] bresp_m,
+    input  logic                   bvalid_m,
+    output logic                   bready_m,
     // Read Address Channel
-    output logic [      MADDR_WIDTH-1:0] araddr_m,
-    output logic [                  2:0] arprot_m,
-    output logic                         arvalid_m,
-    input  logic                         arready_m,
+    output logic [MADDR_WIDTH-1:0] araddr_m,
+    output logic [            2:0] arprot_m,
+    output logic                   arvalid_m,
+    input  logic                   arready_m,
     // Read Data Channel
-    input  logic [                 31:0] rdata_m,
-    input  logic [                  1:0] rresp_m,
-    input  logic                         rvalid_m,
-    output logic                         rready_m
+    input  logic [           31:0] rdata_m,
+    input  logic [            1:0] rresp_m,
+    input  logic                   rvalid_m,
+    output logic                   rready_m
 );
 
   localparam RESP_OKAY = 2'b00, RESP_EXOKAY = 2'b01, RESP_SLVERR = 2'b10, RESP_DECERR = 2'b11;
@@ -48,7 +48,12 @@ module data_fetch #(
   logic [31:0] raw_colors[COLORS_SIZE-1:0];
 
   //// STATE MACHINE ////
-  typedef enum logic [1:0] {READ_COLORS, READ_VERTEX, IDLE, FINAL} state_t;
+  typedef enum logic [1:0] {
+    READ_COLORS,
+    READ_VERTEX,
+    IDLE,
+    FINAL
+  } state_t;
   state_t state;
   state_t next_state;
   wire read_vertex_end;
@@ -56,10 +61,10 @@ module data_fetch #(
 
   always_comb begin : next_state_proc
     case (state)
-      IDLE:         next_state = !start           ? IDLE        : READ_VERTEX ;
-      READ_VERTEX:  next_state = !read_vertex_end ? READ_VERTEX : READ_COLORS ;
-      READ_COLORS:  next_state = !read_colors_end ? READ_COLORS : FINAL       ;
-      FINAL:        next_state = !start           ? FINAL       : READ_VERTEX ;
+      IDLE:        next_state = !start ? IDLE : READ_VERTEX;
+      READ_VERTEX: next_state = !read_vertex_end ? READ_VERTEX : READ_COLORS;
+      READ_COLORS: next_state = !read_colors_end ? READ_COLORS : FINAL;
+      FINAL:       next_state = !start ? FINAL : READ_VERTEX;
     endcase
   end
 
@@ -96,8 +101,8 @@ module data_fetch #(
 
   //// INDEX ////
   logic [7:0] index;
-  localparam index_colors_size = $clog2(COLORS_SIZE-1) + 1;
-  localparam index_vertex_size = $clog2(VERTEX_SIZE-1) + 1;
+  localparam index_colors_size = $clog2(COLORS_SIZE - 1) + 1;
+  localparam index_vertex_size = $clog2(VERTEX_SIZE - 1) + 1;
   wire [index_colors_size-1:0] index_colors = index[index_colors_size-1:0];
   wire [index_vertex_size-1:0] index_vertex = index[index_vertex_size-1:0];
 
