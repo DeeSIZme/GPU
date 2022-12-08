@@ -8,6 +8,7 @@ vpath %.v  ../rtl_src
 
 
 syn_dir := ../nios2/nios_sys/synthesis/submodules/
+tb_dir  := ../tb/
 
 syn_files_sv := $(shell find $(syn_dir) -name "*.sv")
 syn_files_v  += $(shell find $(syn_dir) -name "*.v")
@@ -16,12 +17,22 @@ syn_files_done += $(patsubst $(syn_dir)%.sv, .%.done, $(syn_files_sv))
 syn_files_done += .nios_sys.done
 syn_files_done += .DE1_SoC.done
 
-top: .top_tb.done work
+
+tb_files      :=  $(shell find $(tb_dir) -name "*.sv")
+tb_files_done := $(patsubst $(tb_dir)%.sv, .%.done, $(tb_files))
+
+
+top_tb_files_done := .video_if.done .pkg_vga.done .screen.done .top_tb.done
+vga_tb_files_done := .vga_master.done .vga_master_tb.done .async_fifo.done
+
+top: $(top_tb_files_done) work
 	$(VSIM_CMD) top_tb
 
 
+vga_master:
 
-.top_tb.done: ../top_tb.sv $(syn_files_done)
+
+.top_tb.done: ../tb/top_tb.sv $(syn_files_done)
 	$(VLOG_CMD) $< &&  touch $@
 
 .DE1_SoC.done: ../nios2/DE1_SoC.sv | work
@@ -38,6 +49,14 @@ top: .top_tb.done work
 .%.done:../rtl_src/%.v | work
 	$(VLOG_CMD) $< &&  touch $@
 .%.done:../rtl_src/%.sv | work
+	$(VLOG_CMD) $< &&  touch $@
+
+
+.%.done:../ips/%.sv | work
+	$(VLOG_CMD) $< &&  touch $@
+
+
+.%.done:../tb/%.sv | work
 	$(VLOG_CMD) $< &&  touch $@
 
 clean:

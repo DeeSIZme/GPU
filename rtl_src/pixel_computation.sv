@@ -81,7 +81,7 @@ always_ff @(posedge clk or posedge reset_n) begin
 
     if(y_inc)
       y <= y + 16'h1;
-    else if(y_inc)
+    else if(y_reset)
       y <= 0;
   end
 end

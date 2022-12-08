@@ -156,8 +156,7 @@ always_ff @(posedge clk or negedge resetn)
     end
 
 
-// @todo assign to rdata
-wire [15:0] fifo_wdata = {ppui, 12'h1ff};
+wire [15:0] fifo_wdata = rdata;
 
 
 ////// cross domain fifo

@@ -27,6 +27,17 @@ initial begin
     end
 end
 
+
+video_if ifs();
+
+
+assign ifs.master.CLK   = !vga_clk;
+assign ifs.master.HS    = vga_hs;
+assign ifs.master.VS    = vga_vs;
+assign ifs.master.BLANK = vga_blank_n;
+assign ifs.master.RGB   = {vga_r,vga_g,vga_b};
+
+
 DE1_SoC dut(
     .clock_50(clk),
     .key({3'b0, resetn}),
@@ -41,8 +52,12 @@ DE1_SoC dut(
 );
 
 
+/*
 
+screen screen0 (
+    .video_ifs(ifs.slave)
+);
 
-
+*/
 
 endmodule

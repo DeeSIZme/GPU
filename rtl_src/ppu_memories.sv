@@ -22,7 +22,7 @@ module ppu_memories #(
 
 localparam MEMORY_SIZE = SCREEN_X_SIZE * SCREEN_Y_SIZE;
 
-logic [COLOR_WIDTH-1:0] mem_out[0:CORES_COUNT-1];
+reg [COLOR_WIDTH-1:0] mem_out[0:CORES_COUNT-1];
 
 generate
     genvar i;
@@ -30,7 +30,7 @@ generate
         // memory instanciation
         
         logic [COLOR_WIDTH-1:0] mem[MEMORY_SIZE / CORES_COUNT];
-        
+
 
         always_ff @(posedge clk) begin
             mem_out[i] <= mem[raddress];
