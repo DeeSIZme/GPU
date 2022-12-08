@@ -155,6 +155,30 @@
          type = "String";
       }
    }
+   element nios_sys
+   {
+      datum _originalDeviceFamily
+      {
+         value = "Cyclone V";
+         type = "String";
+      }
+   }
+   element nios_sys
+   {
+      datum _originalDeviceFamily
+      {
+         value = "Cyclone V";
+         type = "String";
+      }
+   }
+   element nios_sys
+   {
+      datum _originalDeviceFamily
+      {
+         value = "Cyclone V";
+         type = "String";
+      }
+   }
    element pixel_clock
    {
       datum _sortIndex
@@ -228,9 +252,9 @@
    type="conduit"
    dir="end" />
  <module name="GPU_0" kind="GPU" version="1.0" enabled="1">
-  <parameter name="COLOR_WIDTH" value="16" />
+  <parameter name="COLOR_WIDTH" value="6" />
   <parameter name="COORD_WIDTH" value="16" />
-  <parameter name="CORES_COUNT" value="1" />
+  <parameter name="CORES_COUNT" value="8" />
   <parameter name="MADDR_WIDTH" value="32" />
   <parameter name="SADDR_WIDTH" value="32" />
   <parameter name="SCREEN_X_SIZE" value="640" />

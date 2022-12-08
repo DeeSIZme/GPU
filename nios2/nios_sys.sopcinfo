@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <EnsembleReport name="nios_sys" kind="nios_sys" version="1.0" fabric="QSYS">
  <!-- Format version 21.1 850 (Future versions may contain additional information.) -->
- <!-- 2022.12.07.13:54:19 -->
+ <!-- 2022.12.08.14:40:16 -->
  <!-- A collection of modules and connections -->
  <parameter name="AUTO_GENERATION_ID">
   <type>java.lang.Integer</type>
-  <value>1670417659</value>
+  <value>1670506815</value>
   <derived>false</derived>
   <enabled>true</enabled>
   <visible>false</visible>
@@ -154,7 +154,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="COLOR_WIDTH">
    <type>int</type>
-   <value>16</value>
+   <value>6</value>
    <derived>false</derived>
    <enabled>true</enabled>
    <visible>true</visible>
@@ -186,7 +186,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="CORES_COUNT">
    <type>int</type>
-   <value>1</value>
+   <value>8</value>
    <derived>false</derived>
    <enabled>true</enabled>
    <visible>true</visible>
@@ -494,115 +494,115 @@ parameters are a RESULT of the module parameters. -->
    <type>axi4lite</type>
    <isStart>false</isStart>
    <port>
-    <name>awaddr</name>
+    <name>awaddr_s</name>
     <direction>Input</direction>
     <width>32</width>
     <role>awaddr</role>
    </port>
    <port>
-    <name>awprot</name>
+    <name>awprot_s</name>
     <direction>Input</direction>
     <width>3</width>
     <role>awprot</role>
    </port>
    <port>
-    <name>awvalid</name>
+    <name>awvalid_s</name>
     <direction>Input</direction>
     <width>1</width>
     <role>awvalid</role>
    </port>
    <port>
-    <name>awready</name>
+    <name>awready_s</name>
     <direction>Output</direction>
     <width>1</width>
     <role>awready</role>
    </port>
    <port>
-    <name>wdata</name>
+    <name>wdata_s</name>
     <direction>Input</direction>
     <width>32</width>
     <role>wdata</role>
    </port>
    <port>
-    <name>wstrb</name>
+    <name>wstrb_s</name>
     <direction>Input</direction>
     <width>4</width>
     <role>wstrb</role>
    </port>
    <port>
-    <name>wvalid</name>
+    <name>wvalid_s</name>
     <direction>Input</direction>
     <width>1</width>
     <role>wvalid</role>
    </port>
    <port>
-    <name>wready</name>
+    <name>wready_s</name>
     <direction>Output</direction>
     <width>1</width>
     <role>wready</role>
    </port>
    <port>
-    <name>bresp</name>
+    <name>bresp_s</name>
     <direction>Output</direction>
     <width>2</width>
     <role>bresp</role>
    </port>
    <port>
-    <name>bvalid</name>
+    <name>bvalid_s</name>
     <direction>Output</direction>
     <width>1</width>
     <role>bvalid</role>
    </port>
    <port>
-    <name>bready</name>
+    <name>bready_s</name>
     <direction>Input</direction>
     <width>1</width>
     <role>bready</role>
    </port>
    <port>
-    <name>araddr</name>
+    <name>araddr_s</name>
     <direction>Input</direction>
     <width>32</width>
     <role>araddr</role>
    </port>
    <port>
-    <name>arprot</name>
+    <name>arprot_s</name>
     <direction>Input</direction>
     <width>3</width>
     <role>arprot</role>
    </port>
    <port>
-    <name>arvalid</name>
+    <name>arvalid_s</name>
     <direction>Input</direction>
     <width>1</width>
     <role>arvalid</role>
    </port>
    <port>
-    <name>arready</name>
+    <name>arready_s</name>
     <direction>Output</direction>
     <width>1</width>
     <role>arready</role>
    </port>
    <port>
-    <name>rdata</name>
+    <name>rdata_s</name>
     <direction>Output</direction>
     <width>32</width>
     <role>rdata</role>
    </port>
    <port>
-    <name>rresp</name>
+    <name>rresp_s</name>
     <direction>Output</direction>
     <width>2</width>
     <role>rresp</role>
    </port>
    <port>
-    <name>rvalid</name>
+    <name>rvalid_s</name>
     <direction>Output</direction>
     <width>1</width>
     <role>rvalid</role>
    </port>
    <port>
-    <name>rready</name>
+    <name>rready_s</name>
     <direction>Input</direction>
     <width>1</width>
     <role>rready</role>
@@ -845,6 +845,218 @@ parameters are a RESULT of the module parameters. -->
     <direction>Output</direction>
     <width>1</width>
     <role>endofpacket</role>
+   </port>
+  </interface>
+  <interface
+     name="altera_axi4lite_master"
+     kind="altera_axi4lite_master"
+     version="21.1">
+   <!-- The connection points exposed by a module instance for the
+particular module parameters. Connection points and their
+parameters are a RESULT of the module parameters. -->
+   <parameter name="associatedClock">
+    <type>java.lang.String</type>
+    <value>process_clk</value>
+    <derived>false</derived>
+    <enabled>true</enabled>
+    <visible>true</visible>
+    <valid>true</valid>
+   </parameter>
+   <parameter name="associatedReset">
+    <type>java.lang.String</type>
+    <value>process_reset</value>
+    <derived>false</derived>
+    <enabled>true</enabled>
+    <visible>true</visible>
+    <valid>true</valid>
+   </parameter>
+   <parameter name="trustzoneAware">
+    <type>boolean</type>
+    <value>true</value>
+    <derived>false</derived>
+    <enabled>true</enabled>
+    <visible>false</visible>
+    <valid>true</valid>
+   </parameter>
+   <parameter name="maximumOutstandingReads">
+    <type>java.lang.Integer</type>
+    <value>1</value>
+    <derived>false</derived>
+    <enabled>true</enabled>
+    <visible>false</visible>
+    <valid>true</valid>
+   </parameter>
+   <parameter name="maximumOutstandingWrites">
+    <type>java.lang.Integer</type>
+    <value>1</value>
+    <derived>false</derived>
+    <enabled>true</enabled>
+    <visible>false</visible>
+    <valid>true</valid>
+   </parameter>
+   <parameter name="maximumOutstandingTransactions">
+    <type>java.lang.Integer</type>
+    <value>1</value>
+    <derived>false</derived>
+    <enabled>true</enabled>
+    <visible>false</visible>
+    <valid>true</valid>
+   </parameter>
+   <parameter name="readIssuingCapability">
+    <type>java.lang.Integer</type>
+    <value>1</value>
+    <derived>false</derived>
+    <enabled>true</enabled>
+    <visible>true</visible>
+    <valid>true</valid>
+   </parameter>
+   <parameter name="writeIssuingCapability">
+    <type>java.lang.Integer</type>
+    <value>1</value>
+    <derived>false</derived>
+    <enabled>true</enabled>
+    <visible>true</visible>
+    <valid>true</valid>
+   </parameter>
+   <parameter name="combinedIssuingCapability">
+    <type>java.lang.Integer</type>
+    <value>1</value>
+    <derived>false</derived>
+    <enabled>true</enabled>
+    <visible>true</visible>
+    <valid>true</valid>
+   </parameter>
+   <parameter name="deviceFamily">
+    <type>java.lang.String</type>
+    <value>UNKNOWN</value>
+    <derived>false</derived>
+    <enabled>true</enabled>
+    <visible>true</visible>
+    <valid>true</valid>
+   </parameter>
+   <parameter name="generateLegacySim">
+    <type>boolean</type>
+    <value>false</value>
+    <derived>false</derived>
+    <enabled>true</enabled>
+    <visible>true</visible>
+    <valid>true</valid>
+   </parameter>
+   <type>axi4lite</type>
+   <isStart>true</isStart>
+   <port>
+    <name>awaddr_m</name>
+    <direction>Output</direction>
+    <width>32</width>
+    <role>awaddr</role>
+   </port>
+   <port>
+    <name>awprot_m</name>
+    <direction>Output</direction>
+    <width>3</width>
+    <role>awprot</role>
+   </port>
+   <port>
+    <name>awvalid_m</name>
+    <direction>Output</direction>
+    <width>1</width>
+    <role>awvalid</role>
+   </port>
+   <port>
+    <name>awready_m</name>
+    <direction>Input</direction>
+    <width>1</width>
+    <role>awready</role>
+   </port>
+   <port>
+    <name>wvalid_m</name>
+    <direction>Output</direction>
+    <width>1</width>
+    <role>wvalid</role>
+   </port>
+   <port>
+    <name>wready_m</name>
+    <direction>Input</direction>
+    <width>1</width>
+    <role>wready</role>
+   </port>
+   <port>
+    <name>wdata_m</name>
+    <direction>Output</direction>
+    <width>32</width>
+    <role>wdata</role>
+   </port>
+   <port>
+    <name>wstrb_m</name>
+    <direction>Output</direction>
+    <width>4</width>
+    <role>wstrb</role>
+   </port>
+   <port>
+    <name>bresp_m</name>
+    <direction>Input</direction>
+    <width>2</width>
+    <role>bresp</role>
+   </port>
+   <port>
+    <name>bvalid_m</name>
+    <direction>Input</direction>
+    <width>1</width>
+    <role>bvalid</role>
+   </port>
+   <port>
+    <name>bready_m</name>
+    <direction>Output</direction>
+    <width>1</width>
+    <role>bready</role>
+   </port>
+   <port>
+    <name>araddr_m</name>
+    <direction>Output</direction>
+    <width>32</width>
+    <role>araddr</role>
+   </port>
+   <port>
+    <name>arprot_m</name>
+    <direction>Output</direction>
+    <width>3</width>
+    <role>arprot</role>
+   </port>
+   <port>
+    <name>arvalid_m</name>
+    <direction>Output</direction>
+    <width>1</width>
+    <role>arvalid</role>
+   </port>
+   <port>
+    <name>arready_m</name>
+    <direction>Input</direction>
+    <width>1</width>
+    <role>arready</role>
+   </port>
+   <port>
+    <name>rdata_m</name>
+    <direction>Input</direction>
+    <width>32</width>
+    <role>rdata</role>
+   </port>
+   <port>
+    <name>rresp_m</name>
+    <direction>Input</direction>
+    <width>2</width>
+    <role>rresp</role>
+   </port>
+   <port>
+    <name>rvalid_m</name>
+    <direction>Input</direction>
+    <width>1</width>
+    <role>rvalid</role>
+   </port>
+   <port>
+    <name>rready_m</name>
+    <direction>Output</direction>
+    <width>1</width>
+    <role>rready</role>
    </port>
   </interface>
  </module>
@@ -2119,6 +2331,14 @@ parameters are a RESULT of the module parameters. -->
   <type>com.altera.entityinterfaces.IElementClass</type>
   <subtype>com.altera.entityinterfaces.IMutableConnectionPoint</subtype>
   <displayName>Avalon Streaming Source</displayName>
+  <version>21.1</version>
+ </plugin>
+ <plugin>
+  <instanceCount>1</instanceCount>
+  <name>altera_axi4lite_master</name>
+  <type>com.altera.entityinterfaces.IElementClass</type>
+  <subtype>com.altera.entityinterfaces.IMutableConnectionPoint</subtype>
+  <displayName>AXI4Lite Master</displayName>
   <version>21.1</version>
  </plugin>
  <plugin>
