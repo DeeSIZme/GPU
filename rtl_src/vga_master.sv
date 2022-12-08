@@ -94,8 +94,10 @@ immediately after the previous endofpacket signal.
       end
     end
   end
+    
 
-
+  wire fifo_empty;
+  assign m_valid = !fifo_empty;
 
   //////////////////////////////////////////
   ///////////// GPU CLK DOMAIN /////////////
@@ -167,7 +169,7 @@ immediately after the previous endofpacket signal.
       .rclk  (vga_clk),
       .read  (m_ready),
       .rdata (vga_color),
-      .rempty(m_valid),
+      .rempty(fifo_empty),
 
       ///// PPU /////
       .wclk(clk),
