@@ -16,25 +16,25 @@ module gpu_top #(
   ////      Interface      /////
   //////////////////////////////
 
-  input          [SADDR_WIDTH-1:0] awaddr,
-  input                     [2:0] awprot,
-  input                           awvalid,
-  output                          awready,
-  input                    [31:0] wdata,
-  input                     [3:0] wstrb,
-  input                           wvalid,
-  output                          wready,
-  output                    [1:0] bresp,
-  output                          bvalid,
-  input                           bready,
-  input          [SADDR_WIDTH-1:0] araddr,
-  input                     [2:0] arprot,
-  input                           arvalid,
-  output                          arready,
-  output                   [31:0] rdata,
-  output                    [1:0] rresp,
-  output                          rvalid,
-  input                           rready,
+  input         [SADDR_WIDTH-1:0] awaddr_s,
+  input                     [2:0] awprot_s,
+  input                           awvalid_s,
+  output                          awready_s,
+  input                    [31:0] wdata_s,
+  input                     [3:0] wstrb_s,
+  input                           wvalid_s,
+  output                          wready_s,
+  output                    [1:0] bresp_s,
+  output                          bvalid_s,
+  input                           bready_s,
+  input         [SADDR_WIDTH-1:0] araddr_s,
+  input                     [2:0] arprot_s,
+  input                           arvalid_s,
+  output                          arready_s,
+  output                   [31:0] rdata_s,
+  output                    [1:0] rresp_s,
+  output                          rvalid_s,
+  input                           rready_s,
 
 
     //////////////////////////////
@@ -85,7 +85,7 @@ module gpu_top #(
   ////  Interrupt Request  /////
   //////////////////////////////
 
-  output                          irq
+  output                          irq //TODO generate irq
 );
 
 wire frame_end;
@@ -93,8 +93,41 @@ wire frame_start;
 wire [31:0]triangles_count;
 wire [MADDR_WIDTH-1:0]base_addr_vertex;
 wire [MADDR_WIDTH-1:0]base_addr_color;
+wire [31:0]global_state = '0; //TODO will be transmetted to the CPU when it reads the control register
+wire interrupt_ack; //TODO generate irq
 
-//TODO AXI target
+target #(
+  .MADDR_WIDTH(MADDR_WIDTH),
+  .SADDR_WIDTH(SADDR_WIDTH)
+    ) target_inst(
+  .clk(clk),
+  .reset_n(reset_n),
+  .global_state(global_state),
+  .frame_start(frame_start),
+  .interrupt_ack(interrupt_ack),
+  .triangles_count(triangles_count),
+  .base_addr_vertex(base_addr_vertex),
+  .base_addr_color(base_addr_color),
+  .awaddr_s(awaddr_s),
+  .awprot_s(awprot_s),
+  .awvalid_s(awvalid_s),
+  .awready_s(awready_s),
+  .wvalid_s(wvalid_s),
+  .wready_s(wready_s),
+  .wdata_s(wdata_s),
+  .wstrb_s(wstrb_s),
+  .bresp_s(bresp_s),
+  .bvalid_s(bvalid_s),
+  .bready_s(bready_s),
+  .araddr_s(araddr_s),
+  .arprot_s(arprot_s),
+  .arvalid_s(arvalid_s),
+  .arready_s(arready_s),
+  .rdata_s(rdata_s),
+  .rresp_s(rresp_s),
+  .rvalid_s(rvalid_s),
+  .rready_s(rready_s)
+);
 
 wire fetch_start;
 logic [MADDR_WIDTH-1:0]curr_addr_vertex;
@@ -139,7 +172,7 @@ wire fetch_eoc;
       .rready_m (rready_m)
   );
 
-  
+
 wire ver_start;
 logic [COORD_WIDTH-1:0]ver_vertexes[3][3];
 wire [COORD_WIDTH-1:0]ver_bound_coefs[3][2];
@@ -208,7 +241,7 @@ pixel_computation #(
     .CORES_COUNT  (CORES_COUNT  ),
     .BUFFER_ADDR_W(BUFFER_ADDR_W)
   ) ppu_mem_i (
-    .clk     (clk), 
+    .clk     (clk),
     .reset_n (reset_n),
 
     // write ports
